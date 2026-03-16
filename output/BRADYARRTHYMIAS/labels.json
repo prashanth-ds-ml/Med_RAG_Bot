@@ -1,0 +1,275 @@
+[
+  {
+    "region_id": "region_001",
+    "page": 1,
+    "label": "title",
+    "bbox": [
+      191,
+      487,
+      2374,
+      573
+    ],
+    "reading_order": 1,
+    "crop_file": "output/BRADYARRTHYMIAS/crops/region_001_title.png"
+  },
+  {
+    "region_id": "region_002",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      191,
+      592,
+      800,
+      1118
+    ],
+    "reading_order": 2,
+    "crop_file": "output/BRADYARRTHYMIAS/crops/region_002_text.png"
+  },
+  {
+    "region_id": "region_003",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      1718,
+      663,
+      2406,
+      1109
+    ],
+    "reading_order": 3,
+    "crop_file": "output/BRADYARRTHYMIAS/crops/region_003_text.png"
+  },
+  {
+    "region_id": "region_004",
+    "page": 1,
+    "label": "header_footer",
+    "bbox": [
+      1055,
+      1153,
+      1514,
+      1214
+    ],
+    "reading_order": 4,
+    "crop_file": "output/BRADYARRTHYMIAS/crops/region_004_header_footer.png"
+  },
+  {
+    "region_id": "region_005",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      0,
+      1220,
+      1322,
+      1593
+    ],
+    "reading_order": 5,
+    "crop_file": "output/BRADYARRTHYMIAS/crops/region_005_text.png"
+  },
+  {
+    "region_id": "region_006",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      1322,
+      1220,
+      1922,
+      1584
+    ],
+    "reading_order": 6,
+    "crop_file": "output/BRADYARRTHYMIAS/crops/region_006_text.png"
+  },
+  {
+    "region_id": "region_007",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      1928,
+      1220,
+      2566,
+      1587
+    ],
+    "reading_order": 7,
+    "crop_file": "output/BRADYARRTHYMIAS/crops/region_007_text.png"
+  },
+  {
+    "region_id": "region_008",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      0,
+      1593,
+      1542,
+      2158
+    ],
+    "reading_order": 8,
+    "crop_file": "output/BRADYARRTHYMIAS/crops/region_008_text.png"
+  },
+  {
+    "region_id": "region_009",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      1558,
+      1593,
+      2566,
+      2174
+    ],
+    "reading_order": 9,
+    "crop_file": "output/BRADYARRTHYMIAS/crops/region_009_text.png"
+  },
+  {
+    "region_id": "region_010",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      0,
+      2158,
+      1294,
+      2776
+    ],
+    "reading_order": 10,
+    "crop_file": "output/BRADYARRTHYMIAS/crops/region_010_text.png"
+  },
+  {
+    "region_id": "region_011",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      1300,
+      2174,
+      2559,
+      2776
+    ],
+    "reading_order": 11,
+    "crop_file": "output/BRADYARRTHYMIAS/crops/region_011_text.png"
+  },
+  {
+    "region_id": "region_012",
+    "page": 1,
+    "label": "header_footer",
+    "bbox": [
+      911,
+      2782,
+      1619,
+      2843
+    ],
+    "reading_order": 12,
+    "crop_file": "output/BRADYARRTHYMIAS/crops/region_012_header_footer.png"
+  },
+  {
+    "region_id": "region_013",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      0,
+      2833,
+      707,
+      3159
+    ],
+    "reading_order": 13,
+    "crop_file": "output/BRADYARRTHYMIAS/crops/region_013_text.png"
+  },
+  {
+    "region_id": "region_014",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      723,
+      2840,
+      1568,
+      3139
+    ],
+    "reading_order": 14,
+    "crop_file": "output/BRADYARRTHYMIAS/crops/region_014_text.png"
+  },
+  {
+    "region_id": "region_015",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      1587,
+      2843,
+      2572,
+      3149
+    ],
+    "reading_order": 15,
+    "crop_file": "output/BRADYARRTHYMIAS/crops/region_015_text.png"
+  },
+  {
+    "region_id": "region_016",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      98,
+      3159,
+      1150,
+      3755
+    ],
+    "reading_order": 16,
+    "crop_file": "output/BRADYARRTHYMIAS/crops/region_016_text.png"
+  },
+  {
+    "region_id": "region_017",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      1265,
+      3159,
+      2473,
+      3774
+    ],
+    "reading_order": 17,
+    "crop_file": "output/BRADYARRTHYMIAS/crops/region_017_text.png"
+  },
+  {
+    "region_id": "region_018",
+    "page": 1,
+    "label": "figure",
+    "bbox": [
+      79,
+      3755,
+      1102,
+      4220
+    ],
+    "reading_order": 18,
+    "crop_file": "output/BRADYARRTHYMIAS/crops/region_018_figure.png"
+  },
+  {
+    "region_id": "region_019",
+    "page": 1,
+    "label": "figure",
+    "bbox": [
+      1418,
+      3755,
+      2422,
+      4223
+    ],
+    "reading_order": 19,
+    "crop_file": "output/BRADYARRTHYMIAS/crops/region_019_figure.png"
+  },
+  {
+    "region_id": "region_020",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      0,
+      4214,
+      2572,
+      4488
+    ],
+    "reading_order": 20,
+    "crop_file": "output/BRADYARRTHYMIAS/crops/region_020_text.png"
+  },
+  {
+    "region_id": "region_021",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      3,
+      4491,
+      2570,
+      4751
+    ],
+    "reading_order": 21,
+    "crop_file": "output/BRADYARRTHYMIAS/crops/region_021_text.png"
+  }
+]

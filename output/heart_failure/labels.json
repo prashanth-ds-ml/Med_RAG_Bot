@@ -1,0 +1,275 @@
+[
+  {
+    "region_id": "region_001",
+    "page": 1,
+    "label": "title",
+    "bbox": [
+      637,
+      323,
+      1920,
+      402
+    ],
+    "reading_order": 1,
+    "crop_file": "output/heart_failure/crops/region_001_title.png"
+  },
+  {
+    "region_id": "region_002",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      120,
+      465,
+      795,
+      957
+    ],
+    "reading_order": 2,
+    "crop_file": "output/heart_failure/crops/region_002_text.png"
+  },
+  {
+    "region_id": "region_003",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      114,
+      969,
+      801,
+      1435
+    ],
+    "reading_order": 3,
+    "crop_file": "output/heart_failure/crops/region_003_text.png"
+  },
+  {
+    "region_id": "region_004",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      1702,
+      459,
+      2472,
+      947
+    ],
+    "reading_order": 4,
+    "crop_file": "output/heart_failure/crops/region_004_text.png"
+  },
+  {
+    "region_id": "region_005",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      1667,
+      985,
+      2472,
+      1445
+    ],
+    "reading_order": 5,
+    "crop_file": "output/heart_failure/crops/region_005_text.png"
+  },
+  {
+    "region_id": "region_006",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      136,
+      1505,
+      960,
+      2034
+    ],
+    "reading_order": 6,
+    "crop_file": "output/heart_failure/crops/region_006_text.png"
+  },
+  {
+    "region_id": "region_007",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      1023,
+      1559,
+      1321,
+      1749
+    ],
+    "reading_order": 7,
+    "crop_file": "output/heart_failure/crops/region_007_text.png"
+  },
+  {
+    "region_id": "region_008",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      1496,
+      1511,
+      2272,
+      1977
+    ],
+    "reading_order": 8,
+    "crop_file": "output/heart_failure/crops/region_008_text.png"
+  },
+  {
+    "region_id": "region_009",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      1911,
+      1999,
+      2453,
+      2259
+    ],
+    "reading_order": 9,
+    "crop_file": "output/heart_failure/crops/region_009_text.png"
+  },
+  {
+    "region_id": "region_010",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      1299,
+      1999,
+      1803,
+      2237
+    ],
+    "reading_order": 10,
+    "crop_file": "output/heart_failure/crops/region_010_text.png"
+  },
+  {
+    "region_id": "region_011",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      126,
+      2063,
+      1141,
+      2602
+    ],
+    "reading_order": 11,
+    "crop_file": "output/heart_failure/crops/region_011_text.png"
+  },
+  {
+    "region_id": "region_012",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      136,
+      2656,
+      773,
+      3033
+    ],
+    "reading_order": 12,
+    "crop_file": "output/heart_failure/crops/region_012_text.png"
+  },
+  {
+    "region_id": "region_013",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      1242,
+      2291,
+      2453,
+      3033
+    ],
+    "reading_order": 13,
+    "crop_file": "output/heart_failure/crops/region_013_text.png"
+  },
+  {
+    "region_id": "region_014",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      183,
+      3039,
+      2377,
+      3213
+    ],
+    "reading_order": 14,
+    "crop_file": "output/heart_failure/crops/region_014_text.png"
+  },
+  {
+    "region_id": "region_015",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      0,
+      3217,
+      2570,
+      3654
+    ],
+    "reading_order": 15,
+    "crop_file": "output/heart_failure/crops/region_015_text.png"
+  },
+  {
+    "region_id": "region_016",
+    "page": 1,
+    "label": "header_footer",
+    "bbox": [
+      954,
+      3648,
+      1629,
+      3702
+    ],
+    "reading_order": 16,
+    "crop_file": "output/heart_failure/crops/region_016_header_footer.png"
+  },
+  {
+    "region_id": "region_017",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      0,
+      3705,
+      782,
+      4243
+    ],
+    "reading_order": 17,
+    "crop_file": "output/heart_failure/crops/region_017_text.png"
+  },
+  {
+    "region_id": "region_018",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      779,
+      3705,
+      1784,
+      4237
+    ],
+    "reading_order": 18,
+    "crop_file": "output/heart_failure/crops/region_018_text.png"
+  },
+  {
+    "region_id": "region_019",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      1784,
+      3705,
+      2570,
+      4231
+    ],
+    "reading_order": 19,
+    "crop_file": "output/heart_failure/crops/region_019_text.png"
+  },
+  {
+    "region_id": "region_020",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      0,
+      4247,
+      2570,
+      4554
+    ],
+    "reading_order": 20,
+    "crop_file": "output/heart_failure/crops/region_020_text.png"
+  },
+  {
+    "region_id": "region_021",
+    "page": 1,
+    "label": "text",
+    "bbox": [
+      3,
+      4560,
+      2570,
+      4751
+    ],
+    "reading_order": 21,
+    "crop_file": "output/heart_failure/crops/region_021_text.png"
+  }
+]
