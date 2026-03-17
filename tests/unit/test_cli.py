@@ -105,3 +105,61 @@ def test_track_source_command_handles_empty_source_directory(tmp_path: Path) -> 
     assert result.exit_code == 0
     assert "Files scanned: 0" in result.output
     assert (tmp_path / "data" / "tracking" / "source_manifest_current.json").exists()
+
+def test_chunk_preview_command_runs_successfully_for_relative_path(tmp_path: Path) -> None:
+    """
+    What this test checks:
+    - chunk-preview works with a path relative to data/test_source.
+
+    Why this matters:
+    - This is the most convenient local workflow for corpus inspection.
+    """
+    source_dir = tmp_path / "data" / "test_source"
+    source_dir.mkdir(parents=True, exist_ok=True)
+
+    sample_file = source_dir / "sample_doc.md"
+    sample_file.write_text(
+        "# Sample Title\n\n## Section\n\nThis is a test paragraph for chunk preview.\n",
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "chunk-preview",
+            "sample_doc.md",
+            "--project-root",
+            str(tmp_path),
+            "--max-chunks",
+            "3",
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert "Chunk Preview" in result.output
+    assert "Document" in result.output
+    assert "Chunking Summary" in result.output
+    assert "Atomic Chunk 1" in result.output
+    assert "Chunk preview completed successfully." in result.output
+
+
+def test_chunk_preview_command_fails_for_missing_file(tmp_path: Path) -> None:
+    """
+    What this test checks:
+    - chunk-preview fails clearly when the requested markdown file does not exist.
+
+    Why this matters:
+    - Good error messages make local debugging much easier.
+    """
+    result = runner.invoke(
+        app,
+        [
+            "chunk-preview",
+            "missing_file.md",
+            "--project-root",
+            str(tmp_path),
+        ],
+    )
+
+    assert result.exit_code != 0
+    assert "Markdown file not found" in result.output
