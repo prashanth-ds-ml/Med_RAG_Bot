@@ -1,6 +1,6 @@
 {
-  "snapshot_id": "snapshot_2026-03-17T06-29-55.581814+00-00",
-  "created_at": "2026-03-17T06:29:55.581814+00:00",
+  "snapshot_id": "snapshot_2026-03-17T05-49-03.526483+00-00",
+  "created_at": "2026-03-17T05:49:03.526483+00:00",
   "source_dir": "/home/enma/Projects/Med_RAG_Bot/data/test_source",
   "file_count": 7,
   "files": {
@@ -41,7 +41,7 @@
         "has_large_flat_blocks": false,
         "has_dense_list_regions": false
       },
-      "last_seen_at": "2026-03-17T06:29:55.582694+00:00"
+      "last_seen_at": "2026-03-17T05:49:03.537128+00:00"
     },
     "atrial_fibrillation.md": {
       "doc_id": "atrial_fibrillation",
@@ -80,46 +80,46 @@
         "has_large_flat_blocks": false,
         "has_dense_list_regions": false
       },
-      "last_seen_at": "2026-03-17T06:29:55.583404+00:00"
+      "last_seen_at": "2026-03-17T05:49:03.544199+00:00"
     },
     "bradyarrthymias_in_symptomatic_patients.md": {
       "doc_id": "bradyarrthymias_in_symptomatic_patients",
       "file_name": "bradyarrthymias_in_symptomatic_patients.md",
       "relative_path": "bradyarrthymias_in_symptomatic_patients.md",
       "absolute_path": "/home/enma/Projects/Med_RAG_Bot/data/test_source/bradyarrthymias_in_symptomatic_patients.md",
-      "size_bytes": 4185,
-      "content_hash": "5c4d097b3240b150448b7864ce531eeb2fc789d3015881db6fa55a9f57790463",
-      "content_hash_short": "5c4d097b3240",
-      "char_count": 4121,
-      "word_count": 609,
+      "size_bytes": 4063,
+      "content_hash": "486ec6323834d394b9e44fe90b36ff8088b64535237500921aea9b5072d0c7f5",
+      "content_hash_short": "486ec6323834",
+      "char_count": 3999,
+      "word_count": 588,
       "formatting_stats": {
-        "char_count": 4121,
-        "word_count": 609,
-        "line_count": 108,
+        "char_count": 3999,
+        "word_count": 588,
+        "line_count": 57,
         "heading_count_h1": 1,
-        "heading_count_h2": 11,
-        "heading_count_h3": 6,
+        "heading_count_h2": 2,
+        "heading_count_h3": 0,
         "heading_count_h4_plus": 0,
-        "heading_depth_max": 3,
+        "heading_depth_max": 2,
         "bullet_count": 0,
-        "numbered_list_count": 22,
+        "numbered_list_count": 2,
         "code_block_count": 0,
         "table_stub_count": 0,
         "table_like_line_count": 0,
         "image_ref_count": 0,
-        "blank_line_count": 36,
-        "blank_line_ratio": 0.3333,
-        "section_count": 18,
-        "avg_section_length": 33.83,
-        "max_section_length": 84,
-        "num_short_sections": 17,
+        "blank_line_count": 28,
+        "blank_line_ratio": 0.4912,
+        "section_count": 3,
+        "avg_section_length": 196.0,
+        "max_section_length": 283,
+        "num_short_sections": 1,
         "num_long_sections": 0,
         "has_clear_hierarchy": true,
         "has_broken_heading_order": false,
         "has_large_flat_blocks": false,
-        "has_dense_list_regions": true
+        "has_dense_list_regions": false
       },
-      "last_seen_at": "2026-03-17T06:29:55.584131+00:00"
+      "last_seen_at": "2026-03-17T05:49:03.550133+00:00"
     },
     "st_elevation_myocardial_infarction_stemi.md": {
       "doc_id": "st_elevation_myocardial_infarction_stemi",
@@ -158,7 +158,7 @@
         "has_large_flat_blocks": false,
         "has_dense_list_regions": false
       },
-      "last_seen_at": "2026-03-17T06:29:55.584683+00:00"
+      "last_seen_at": "2026-03-17T05:49:03.551222+00:00"
     },
     "sta_da_d_eat_e_t_o_o_s_heart_failure_a_breathless_patient_icd_11_bd10_bd1z.md": {
       "doc_id": "sta_da_d_eat_e_t_o_o_s_heart_failure_a_breathless_patient_icd_11_bd10_bd1z",
@@ -197,7 +197,7 @@
         "has_large_flat_blocks": false,
         "has_dense_list_regions": true
       },
-      "last_seen_at": "2026-03-17T06:29:55.585334+00:00"
+      "last_seen_at": "2026-03-17T05:49:03.552474+00:00"
     },
     "stable_angina.md": {
       "doc_id": "stable_angina",
@@ -236,7 +236,7 @@
         "has_large_flat_blocks": false,
         "has_dense_list_regions": false
       },
-      "last_seen_at": "2026-03-17T06:29:55.585783+00:00"
+      "last_seen_at": "2026-03-17T05:49:03.553449+00:00"
     },
     "unstable_anginanstemi.md": {
       "doc_id": "unstable_anginanstemi",
@@ -275,7 +275,7 @@
         "has_large_flat_blocks": false,
         "has_dense_list_regions": false
       },
-      "last_seen_at": "2026-03-17T06:29:55.586212+00:00"
+      "last_seen_at": "2026-03-17T05:49:03.554419+00:00"
     }
   }
 }
