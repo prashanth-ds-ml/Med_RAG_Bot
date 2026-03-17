@@ -1,0 +1,109 @@
+{
+  "corpus_summary": {
+    "document_count": 7,
+    "total_atomic_chunks": 84,
+    "total_parent_chunks": 63,
+    "avg_atomic_words_across_docs": 70.24,
+    "avg_parent_words_across_docs": 188.57
+  },
+  "documents": [
+    {
+      "doc_id": "acute_rhinosinusitis",
+      "source_file": "acute_rhinosinusitis.md",
+      "relative_path": "acute_rhinosinusitis.md",
+      "atomic_chunk_count": 14,
+      "parent_chunk_count": 14,
+      "avg_atomic_words": 40.29,
+      "max_atomic_words": 111,
+      "avg_parent_words": 40.29,
+      "max_parent_words": 111,
+      "list_heavy_atomic_chunks": 3,
+      "table_ref_atomic_chunks": 0,
+      "image_ref_atomic_chunks": 0
+    },
+    {
+      "doc_id": "atrial_fibrillation",
+      "source_file": "atrial_fibrillation.md",
+      "relative_path": "atrial_fibrillation.md",
+      "atomic_chunk_count": 17,
+      "parent_chunk_count": 17,
+      "avg_atomic_words": 29.41,
+      "max_atomic_words": 57,
+      "avg_parent_words": 29.41,
+      "max_parent_words": 57,
+      "list_heavy_atomic_chunks": 2,
+      "table_ref_atomic_chunks": 0,
+      "image_ref_atomic_chunks": 0
+    },
+    {
+      "doc_id": "bradyarrthymias_in_symptomatic_patients",
+      "source_file": "bradyarrthymias_in_symptomatic_patients.md",
+      "relative_path": "bradyarrthymias_in_symptomatic_patients.md",
+      "atomic_chunk_count": 15,
+      "parent_chunk_count": 15,
+      "avg_atomic_words": 35.27,
+      "max_atomic_words": 77,
+      "avg_parent_words": 35.27,
+      "max_parent_words": 77,
+      "list_heavy_atomic_chunks": 6,
+      "table_ref_atomic_chunks": 0,
+      "image_ref_atomic_chunks": 0
+    },
+    {
+      "doc_id": "st_elevation_myocardial_infarction_stemi",
+      "source_file": "st_elevation_myocardial_infarction_stemi.md",
+      "relative_path": "st_elevation_myocardial_infarction_stemi.md",
+      "atomic_chunk_count": 9,
+      "parent_chunk_count": 2,
+      "avg_atomic_words": 90.78,
+      "max_atomic_words": 234,
+      "avg_parent_words": 408.5,
+      "max_parent_words": 627,
+      "list_heavy_atomic_chunks": 1,
+      "table_ref_atomic_chunks": 0,
+      "image_ref_atomic_chunks": 0
+    },
+    {
+      "doc_id": "sta_da_d_eat_e_t_o_o_s_heart_failure_a_breathless_patient_icd_11_bd10_bd1z",
+      "source_file": "sta_da_d_eat_e_t_o_o_s_heart_failure_a_breathless_patient_icd_11_bd10_bd1z.md",
+      "relative_path": "sta_da_d_eat_e_t_o_o_s_heart_failure_a_breathless_patient_icd_11_bd10_bd1z.md",
+      "atomic_chunk_count": 14,
+      "parent_chunk_count": 10,
+      "avg_atomic_words": 64.79,
+      "max_atomic_words": 146,
+      "avg_parent_words": 90.7,
+      "max_parent_words": 344,
+      "list_heavy_atomic_chunks": 4,
+      "table_ref_atomic_chunks": 0,
+      "image_ref_atomic_chunks": 0
+    },
+    {
+      "doc_id": "stable_angina",
+      "source_file": "stable_angina.md",
+      "relative_path": "stable_angina.md",
+      "atomic_chunk_count": 6,
+      "parent_chunk_count": 3,
+      "avg_atomic_words": 129.67,
+      "max_atomic_words": 215,
+      "avg_parent_words": 259.33,
+      "max_parent_words": 435,
+      "list_heavy_atomic_chunks": 1,
+      "table_ref_atomic_chunks": 0,
+      "image_ref_atomic_chunks": 0
+    },
+    {
+      "doc_id": "unstable_anginanstemi",
+      "source_file": "unstable_anginanstemi.md",
+      "relative_path": "unstable_anginanstemi.md",
+      "atomic_chunk_count": 9,
+      "parent_chunk_count": 2,
+      "avg_atomic_words": 101.44,
+      "max_atomic_words": 145,
+      "avg_parent_words": 456.5,
+      "max_parent_words": 681,
+      "list_heavy_atomic_chunks": 1,
+      "table_ref_atomic_chunks": 0,
+      "image_ref_atomic_chunks": 0
+    }
+  ]
+}

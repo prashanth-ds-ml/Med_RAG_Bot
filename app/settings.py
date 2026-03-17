@@ -148,6 +148,10 @@ class AppSettings:
     @property
     def eval_runs_path(self) -> Path:
         return self.evals_dir / "eval_runs.jsonl"
+    
+    @property
+    def bm25_index_path(self) -> Path:
+        return self.bm25_index_dir / "bm25_index.pkl"
 
     @property
     def failure_cases_path(self) -> Path:

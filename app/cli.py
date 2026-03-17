@@ -7,7 +7,12 @@ Main Typer CLI for the Med360 RAG local workflow.
 from pathlib import Path
 
 import typer
-
+from app.retrieval.bm25_index import (
+    build_bm25_index_from_atomic_chunks,
+    search_bm25_index,
+)
+from app.retrieval.bm25_index import build_bm25_index_from_atomic_chunks
+from app.ingestion.ingest_markdown import ingest_markdown_corpus
 from app.chunking.chunk_markdown import ChunkingConfig, chunk_markdown_file
 from app.console import (
     print_change_summary,
@@ -276,6 +281,196 @@ def chunk_preview(
 
     print_success("Chunk preview completed successfully.")
 
+@app.command("ingest")
+def ingest(
+    project_root: str | None = typer.Option(
+        None,
+        "--project-root",
+        help="Optional override for the project root directory.",
+    ),
+    target_words: int = typer.Option(
+        220,
+        "--target-words",
+        min=20,
+        help="Target word count for atomic chunks.",
+    ),
+    max_words: int = typer.Option(
+        300,
+        "--max-words",
+        min=30,
+        help="Maximum word count for atomic chunks.",
+    ),
+    min_words: int = typer.Option(
+        80,
+        "--min-words",
+        min=1,
+        help="Minimum word count before small-chunk merging.",
+    ),
+    parent_target_words: int = typer.Option(
+        700,
+        "--parent-target-words",
+        min=50,
+        help="Target word count for parent chunks.",
+    ),
+    parent_max_words: int = typer.Option(
+        900,
+        "--parent-max-words",
+        min=80,
+        help="Maximum word count for parent chunks.",
+    ),
+) -> None:
+    """
+    Ingest all markdown files in data/test_source and write chunk artifacts.
+
+    Why this command matters:
+    - This is the first bulk-processing stage for the corpus
+    - Produces combined chunk artifacts for later retrieval and indexing
+    """
+    active_settings = get_settings(project_root)
+    active_settings.ensure_directories()
+
+    print_rule("Markdown Ingest Run")
+    print_info(f"Source directory: {active_settings.test_source_dir}")
+
+    config = ChunkingConfig(
+        min_chunk_words=min_words,
+        target_chunk_words=target_words,
+        max_chunk_words=max_words,
+        overlap_words=40,
+        parent_target_words=parent_target_words,
+        parent_max_words=parent_max_words,
+    )
+
+    result = ingest_markdown_corpus(
+        source_dir=active_settings.test_source_dir,
+        atomic_chunks_path=active_settings.atomic_chunks_path,
+        parent_chunks_path=active_settings.parent_chunks_path,
+        chunk_stats_path=active_settings.chunk_stats_path,
+        config=config,
+    )
+
+    print_panel(
+        (
+            f"Documents processed: {result['document_count']}\n"
+            f"Atomic chunks written: {result['total_atomic_chunks']}\n"
+            f"Parent chunks written: {result['total_parent_chunks']}"
+        ),
+        title="Ingest Result",
+        border_style="success",
+    )
+
+    print_path_summary(
+        {
+            "Atomic chunks": result["atomic_chunks_path"],
+            "Parent chunks": result["parent_chunks_path"],
+            "Chunk stats": result["chunk_stats_path"],
+        },
+        title="Written Artifacts",
+    )
+
+    print_success("Markdown ingest completed successfully.")
+
+@app.command("build-bm25")
+def build_bm25(
+    project_root: str | None = typer.Option(
+        None,
+        "--project-root",
+        help="Optional override for the project root directory.",
+    ),
+) -> None:
+    """
+    Build a BM25 index from atomic chunk artifacts.
+
+    Why this command matters:
+    - Provides the first real retrieval layer for the local pipeline
+    - Uses transparent lexical matching that is easy to inspect and debug
+    """
+    active_settings = get_settings(project_root)
+    active_settings.ensure_directories()
+
+    print_rule("BM25 Index Build")
+    print_info(f"Atomic chunks source: {active_settings.atomic_chunks_path}")
+
+    result = build_bm25_index_from_atomic_chunks(
+        atomic_chunks_path=active_settings.atomic_chunks_path,
+        output_path=active_settings.bm25_index_path,
+    )
+
+    print_panel(
+        (
+            f"Chunk records indexed: {result['document_count']}\n"
+            f"BM25 index saved to: {result['index_path']}"
+        ),
+        title="BM25 Build Result",
+        border_style="success",
+    )
+
+    print_success("BM25 index built successfully.")
+
+@app.command("search-bm25")
+def search_bm25(
+    query: str = typer.Argument(..., help="Query to search against the BM25 index."),
+    project_root: str | None = typer.Option(
+        None,
+        "--project-root",
+        help="Optional override for the project root directory.",
+    ),
+    top_k: int = typer.Option(
+        5,
+        "--top-k",
+        min=1,
+        help="Number of top results to return.",
+    ),
+) -> None:
+    """
+    Search the local BM25 index and print top matching chunks.
+    """
+    active_settings = get_settings(project_root)
+
+    if not active_settings.bm25_index_path.exists():
+        raise typer.BadParameter(
+            f"BM25 index not found: {active_settings.bm25_index_path}. Run 'build-bm25' first."
+        )
+
+    print_rule("BM25 Search")
+    print_info(f"Query: {query}")
+
+    results = search_bm25_index(
+        active_settings.bm25_index_path,
+        query,
+        top_k=top_k,
+    )
+
+    if not results:
+        print_warning("No BM25 results found.")
+        return
+
+    print_kv_summary(
+        {
+            "Top results returned": len(results),
+            "Index path": active_settings.bm25_index_path,
+        },
+        title="Search Summary",
+    )
+
+    for result in results:
+        record = result["record"]
+        heading_path = " > ".join(record.get("heading_path", [])) or "(no heading path)"
+        preview = _truncate_text(result["chunk_text"], max_chars=220)
+
+        print_panel(
+            (
+                f"Rank: {result['rank']}\n"
+                f"Score: {result['score']:.4f}\n"
+                f"Chunk ID: {result['chunk_id']}\n"
+                f"Heading path: {heading_path}\n\n"
+                f"Preview:\n{preview}"
+            ),
+            title=f"BM25 Result {result['rank']}",
+            border_style="success",
+        )
+
+    print_success("BM25 search completed successfully.")
 
 @app.callback()
 def main() -> None:
