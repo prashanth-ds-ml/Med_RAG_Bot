@@ -7,6 +7,7 @@ Main Typer CLI for the Med360 RAG local workflow.
 from pathlib import Path
 
 import typer
+from app.generation.answer import build_baseline_answer
 from app.retrieval.bm25_index import (
     build_bm25_index_from_atomic_chunks,
     search_bm25_index,
@@ -471,6 +472,81 @@ def search_bm25(
         )
 
     print_success("BM25 search completed successfully.")
+
+@app.command("ask")
+def ask(
+    query: str = typer.Argument(..., help="Question to ask against the local corpus."),
+    project_root: str | None = typer.Option(
+        None,
+        "--project-root",
+        help="Optional override for the project root directory.",
+    ),
+    top_k: int = typer.Option(
+        5,
+        "--top-k",
+        min=1,
+        help="Number of BM25 results to use for the answer.",
+    ),
+) -> None:
+    """
+    Ask a question against the local corpus using BM25 retrieval.
+
+    Why this command matters:
+    - Closes the loop from source files to a first grounded QA workflow
+    - Helps debug retrieval quality before adding vector search or an LLM
+    """
+    active_settings = get_settings(project_root)
+    active_settings.ensure_directories()
+
+    if not active_settings.bm25_index_path.exists():
+        raise typer.BadParameter(
+            f"BM25 index not found: {active_settings.bm25_index_path}. Run 'build-bm25' first."
+        )
+
+    print_rule("Local QA Run")
+    print_info(f"Question: {query}")
+
+    results = search_bm25_index(
+        active_settings.bm25_index_path,
+        query,
+        top_k=top_k,
+    )
+
+    answer = build_baseline_answer(query, results)
+
+    print_panel(
+        answer["answer_text"],
+        title="Answer",
+        border_style="success" if answer["grounded"] else "warning",
+    )
+
+    if results:
+        print_kv_summary(
+            {
+                "Retrieved chunks used": len(results),
+                "Grounded": answer["grounded"],
+            },
+            title="Answer Summary",
+        )
+
+        for index, item in enumerate(results, start=1):
+            record = item["record"]
+            heading_path = " > ".join(record.get("heading_path", [])) or "(no heading path)"
+            preview = _truncate_text(item["chunk_text"], max_chars=220)
+
+            print_panel(
+                (
+                    f"Rank: {item['rank']}\n"
+                    f"Score: {item['score']:.4f}\n"
+                    f"Chunk ID: {item['chunk_id']}\n"
+                    f"Heading path: {heading_path}\n\n"
+                    f"Preview:\n{preview}"
+                ),
+                title=f"Evidence Chunk {index}",
+                border_style="info",
+            )
+
+    print_success("Local QA completed successfully.")
 
 @app.callback()
 def main() -> None:

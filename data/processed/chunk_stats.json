@@ -1,10 +1,10 @@
 {
   "corpus_summary": {
     "document_count": 7,
-    "total_atomic_chunks": 84,
-    "total_parent_chunks": 63,
-    "avg_atomic_words_across_docs": 70.24,
-    "avg_parent_words_across_docs": 188.57
+    "total_atomic_chunks": 93,
+    "total_parent_chunks": 78,
+    "avg_atomic_words_across_docs": 63.37,
+    "avg_parent_words_across_docs": 136.68
   },
   "documents": [
     {
@@ -53,13 +53,13 @@
       "doc_id": "st_elevation_myocardial_infarction_stemi",
       "source_file": "st_elevation_myocardial_infarction_stemi.md",
       "relative_path": "st_elevation_myocardial_infarction_stemi.md",
-      "atomic_chunk_count": 9,
-      "parent_chunk_count": 2,
-      "avg_atomic_words": 90.78,
-      "max_atomic_words": 234,
-      "avg_parent_words": 408.5,
-      "max_parent_words": 627,
-      "list_heavy_atomic_chunks": 1,
+      "atomic_chunk_count": 18,
+      "parent_chunk_count": 17,
+      "avg_atomic_words": 42.72,
+      "max_atomic_words": 167,
+      "avg_parent_words": 45.24,
+      "max_parent_words": 211,
+      "list_heavy_atomic_chunks": 10,
       "table_ref_atomic_chunks": 0,
       "image_ref_atomic_chunks": 0
     },

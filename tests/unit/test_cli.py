@@ -306,3 +306,56 @@ def test_search_bm25_command_handles_empty_results(tmp_path: Path) -> None:
 
     assert search_result.exit_code == 0
     assert "No BM25 results found." in search_result.output
+
+def test_ask_command_returns_grounded_answer_when_index_exists(tmp_path: Path) -> None:
+    """
+    What this test checks:
+    - ask command runs successfully after BM25 index build
+    - answer and evidence sections are printed
+
+    Why this matters:
+    - This is the first end-to-end QA command in the local pipeline.
+    """
+    processed_dir = tmp_path / "data" / "processed"
+    processed_dir.mkdir(parents=True, exist_ok=True)
+
+    atomic_chunks_path = processed_dir / "atomic_chunks.jsonl"
+    atomic_chunks_path.write_text(
+        '{"chunk_id":"afib_1","chunk_text":"atrial fibrillation symptoms palpitations fatigue","heading_path":["Atrial Fibrillation","Symptoms"]}\n'
+        '{"chunk_id":"afib_2","chunk_text":"atrial fibrillation management rate control rhythm control","heading_path":["Atrial Fibrillation","Management"]}\n',
+        encoding="utf-8",
+    )
+
+    build_result = runner.invoke(
+        app,
+        ["build-bm25", "--project-root", str(tmp_path)],
+    )
+    assert build_result.exit_code == 0
+
+    ask_result = runner.invoke(
+        app,
+        ["ask", "What are the symptoms of atrial fibrillation?", "--project-root", str(tmp_path)],
+    )
+
+    assert ask_result.exit_code == 0
+    assert "Local QA Run" in ask_result.output
+    assert "Answer" in ask_result.output
+    assert "Evidence Chunk 1" in ask_result.output
+    assert "Local QA completed successfully." in ask_result.output
+
+
+def test_ask_command_fails_when_bm25_index_missing(tmp_path: Path) -> None:
+    """
+    What this test checks:
+    - ask command fails clearly when BM25 index has not been built yet.
+
+    Why this matters:
+    - Good workflow guidance is important for local usage.
+    """
+    result = runner.invoke(
+        app,
+        ["ask", "What is atrial fibrillation?", "--project-root", str(tmp_path)],
+    )
+
+    assert result.exit_code != 0
+    assert "BM25 index not found" in result.output
