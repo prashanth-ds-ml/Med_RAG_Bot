@@ -141,6 +141,25 @@ class AppSettings:
     def pipeline_events_path(self) -> Path:
         return self.logs_dir / "pipeline_events.jsonl"
 
+    # --- Observability log files (Phase 5) ---
+    # Mirror MongoDB collection schemas exactly so upload-logs can bulk-insert them.
+
+    @property
+    def chat_sessions_log_path(self) -> Path:
+        return self.logs_dir / "chat_sessions.jsonl"
+
+    @property
+    def messages_log_path(self) -> Path:
+        return self.logs_dir / "messages.jsonl"
+
+    @property
+    def retrieval_logs_log_path(self) -> Path:
+        return self.logs_dir / "retrieval_logs.jsonl"
+
+    @property
+    def feedback_log_path(self) -> Path:
+        return self.logs_dir / "feedback.jsonl"
+
     @property
     def gold_queries_path(self) -> Path:
         return self.evals_dir / "gold_queries.jsonl"
@@ -151,11 +170,71 @@ class AppSettings:
     
     @property
     def bm25_index_path(self) -> Path:
+        """BM25 index for the markdown test corpus."""
         return self.bm25_index_dir / "bm25_index.pkl"
+
+    @property
+    def corpus_bm25_index_path(self) -> Path:
+        """BM25 index for the main PDF corpus."""
+        return self.bm25_index_dir / "corpus_bm25_index.pkl"
+
+    @property
+    def faiss_index_path(self) -> Path:
+        return self.vector_index_dir / "faiss_index.bin"
+
+    @property
+    def vector_payload_path(self) -> Path:
+        return self.vector_index_dir / "vector_payload.pkl"
 
     @property
     def failure_cases_path(self) -> Path:
         return self.evals_dir / "failure_cases.jsonl"
+
+    # --- Corpus pipeline paths ---
+
+    @property
+    def corpus_pipeline_dir(self) -> Path:
+        return self.data_dir / "corpus_pipeline"
+
+    @property
+    def profiles_path(self) -> Path:
+        return self.corpus_pipeline_dir / "profiles" / "per_pdf_profiles.jsonl"
+
+    @property
+    def language_tags_path(self) -> Path:
+        return (
+            self.corpus_pipeline_dir
+            / "language_filter_second_pass"
+            / "updated_keep_after_second_pass.jsonl"
+        )
+
+    @property
+    def downloaded_files_path(self) -> Path:
+        return self.data_dir / "raw_corpus" / "manifests" / "downloaded_files.jsonl"
+
+    @property
+    def corpus_manifest_path(self) -> Path:
+        return self.corpus_pipeline_dir / "corpus_manifest.jsonl"
+
+    @property
+    def extracted_corpus_dir(self) -> Path:
+        return self.corpus_pipeline_dir / "extracted"
+
+    @property
+    def extraction_manifest_path(self) -> Path:
+        return self.extracted_corpus_dir / "extraction_manifest.jsonl"
+
+    @property
+    def corpus_atomic_chunks_path(self) -> Path:
+        return self.processed_dir / "corpus_atomic_chunks.jsonl"
+
+    @property
+    def corpus_parent_chunks_path(self) -> Path:
+        return self.processed_dir / "corpus_parent_chunks.jsonl"
+
+    @property
+    def corpus_chunk_stats_path(self) -> Path:
+        return self.processed_dir / "corpus_chunk_stats.json"
 
     @property
     def pipeline_config_path(self) -> Path:
