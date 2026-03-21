@@ -11,6 +11,7 @@ from pathlib import Path
 import typer
 from rich.live import Live
 from rich.panel import Panel as RichPanel
+from app.engine import ChatEngine
 from app.generation.llm_client import QwenClient
 from app.generation.prompt_builder import build_messages
 from app.generation.response_formatter import (
@@ -1044,8 +1045,8 @@ def chat(
     model_name: str = typer.Option("Qwen/Qwen3-4B", "--model", help="Generation model."),
     thinking: bool = typer.Option(False, "--thinking/--no-thinking", help="Enable thinking mode."),
     thinking_budget: int = typer.Option(512, "--thinking-budget", min=0, help="Max tokens for <think> block (0 = unlimited). Only used when --thinking is on."),
-    reranker: bool = typer.Option(True, "--reranker/--no-reranker", help="Enable cross-encoder re-ranking (runs on CPU, ~200-400ms/query)."),
-    reranker_model: str = typer.Option("BAAI/bge-reranker-base", "--reranker-model", help="Cross-encoder model for re-ranking."),
+    reranker: bool = typer.Option(False, "--reranker/--no-reranker", help="Enable cross-encoder re-ranking (runs on CPU, ~200-400ms/query). Requires model download on first use."),
+    reranker_model: str = typer.Option("cross-encoder/ms-marco-MiniLM-L-6-v2", "--reranker-model", help="Cross-encoder model for re-ranking."),
 ) -> None:
     """
     Interactive multi-turn chat session with the medical corpus.
@@ -1073,24 +1074,16 @@ def chat(
     print_info(f"Session: {session_id[:12]}  |  db: {'connected' if ping_db() else 'MongoDB offline | JSONL logging active'}")
     print_info("Loading indexes and model (first load may take a moment)...")
 
-    retriever = HybridRetriever.load(
-        bm25_index_path=active_settings.corpus_bm25_index_path,
-        faiss_index_path=active_settings.faiss_index_path,
-        vector_payload_path=active_settings.vector_payload_path,
-        fetch_k=fetch_k,
-        reranker_model=reranker_model if reranker else None,
-        reranker_device="cpu",
-    )
-    client = QwenClient(model_name=model_name)
-    client.load()
-
-    log_session_start(
-        session_id=session_id,
-        model_name=model_name,
+    engine = ChatEngine(
+        app_settings=active_settings,
         top_k=top_k,
         fetch_k=fetch_k,
-        thinking_on=thinking,
+        model_name=model_name,
+        use_reranker=reranker,
+        reranker_model=reranker_model,
     )
+    engine.load()
+    engine.start_session(session_id=session_id, thinking_on=thinking)
 
     _HELP_TEXT = (
         "  /think              — toggle thinking computation on/off\n"
@@ -1230,63 +1223,34 @@ def chat(
 
         # --- RAG turn ---
         turn += 1
-        results = retriever.search(query, top_k=top_k)
-        if not results:
+        think_label = "Thinking then generating..." if think_on else "Generating..."
+        with console.status(f"[dim cyan]{think_label}[/dim cyan]", spinner="dots"):
+            resp = engine.ask(
+                query,
+                session_id=session_id,
+                turn=turn,
+                history=history[-3:] if history else None,
+                enable_thinking=think_on,
+                thinking_budget=think_budget,
+            )
+
+        if not resp.retrieved_chunks:
             print_warning("No relevant context found for this query.")
             continue
 
-        # Confidence from top retrieval score
-        top_score = results[0].get("fused_score", 0.0) if results else 0.0
-        confidence = "HIGH" if top_score >= 0.025 else ("MED" if top_score >= 0.015 else "LOW")
+        confidence      = resp.confidence
+        last_message_id = resp.message_id
 
-        # Build messages with last 3 turns of conversation memory
-        messages = build_messages(query, results, history=history[-3:] if history else None)
+        border = "success" if resp.grounded else "warning"
+        print_panel(resp.answer_text, title=f"[{turn}] {resp.query_type}", border_style=border)
+        print_panel(resp.citations_text, title="Sources", border_style="info")
 
-        # --- Generation with spinner ---
-        # TextIteratorStreamer adds ~9x overhead on 4-bit local models — use
-        # bulk generate() and show a spinner for visual feedback instead.
-        think_label = "Thinking then generating..." if think_on else "Generating..."
-        with console.status(f"[dim cyan]{think_label}[/dim cyan]", spinner="dots"):
-            gen = client.generate(messages, enable_thinking=think_on, thinking_budget=think_budget)
-
-        response = format_response(
-            raw_answer=gen.answer_text,
-            retrieved_chunks=results,
-            query=query,
-            generation_time_ms=gen.generation_time_ms,
-            prompt_tokens=gen.prompt_tokens,
-            completion_tokens=gen.completion_tokens,
-            model_name=gen.model_name,
-            thinking_text=gen.thinking_text,
-        )
-
-        border = "success" if response["grounded"] else "warning"
-        print_panel(
-            response["answer_text"],
-            title=f"[{turn}] {response['query_type']}",
-            border_style=border,
-        )
-
-        # --- Post-generation display ---
-        print_panel(render_deduplicated_citations(response["citations"]), title="Sources", border_style="info")
-
-        if response.get("follow_ups"):
-            follow_text = "\n".join(f"  • {q}" for q in response["follow_ups"])
+        if resp.follow_ups:
+            follow_text = "\n".join(f"  • {q}" for q in resp.follow_ups)
             print_panel(follow_text, title="You might also ask", border_style="muted")
 
-        # Log to MongoDB
-        last_message_id = log_turn(
-            session_id=session_id,
-            turn=turn,
-            query=query,
-            response=response,
-            retrieved_chunks=results,
-            top_k=top_k,
-            fetch_k=fetch_k,
-        )
-
-        # Update conversation memory (last 3 turns)
-        history.append((query, response["answer_text"]))
+        # Update conversation memory
+        history.append((query, resp.answer_text))
         if len(history) > 3:
             history.pop(0)
 
@@ -1294,46 +1258,43 @@ def chat(
         turn_log.append({
             "turn":       turn,
             "query":      query,
-            "query_type": response["query_type"],
-            "answer":     response["answer_text"],
-            "sources":    render_deduplicated_citations(response["citations"]),
-            "follow_ups": response.get("follow_ups", []),
-            "tokens":     response["total_tokens"],
-            "time_s":     response["generation_time_ms"] / 1000,
+            "query_type": resp.query_type,
+            "answer":     resp.answer_text,
+            "sources":    resp.citations_text,
+            "follow_ups": resp.follow_ups,
+            "tokens":     resp.total_tokens,
+            "time_s":     resp.generation_time_ms / 1000,
             "confidence": confidence,
         })
 
         if verbose:
             print_kv_summary(
                 {
-                    "Query type":        response["query_type"],
-                    "Confidence":        confidence,
-                    "Grounded":          response["grounded"],
-                    "Chunks used":       len(results),
-                    "Prompt tokens":     response["prompt_tokens"],
-                    "Completion tokens": response["completion_tokens"],
-                    "Generation time":   f"{response['generation_time_ms']} ms",
-                    "Message ID":        last_message_id[:12],
+                    "Query type":        resp.query_type,
+                    "Confidence":        resp.confidence,
+                    "Grounded":          resp.grounded,
+                    "Chunks used":       len(resp.retrieved_chunks),
+                    "Prompt tokens":     resp.prompt_tokens,
+                    "Completion tokens": resp.completion_tokens,
+                    "Generation time":   f"{resp.generation_time_ms} ms",
+                    "Message ID":        resp.message_id[:12],
                 },
                 title="Stats",
             )
         else:
-            gen_s = response["generation_time_ms"] / 1000
-            grounded_mark = "✓" if response["grounded"] else "✗"
-            conf_color = {"HIGH": "green", "MED": "yellow", "LOW": "red"}.get(confidence, "white")
+            gen_s         = resp.generation_time_ms / 1000
+            grounded_mark = "✓" if resp.grounded else "✗"
+            conf_color    = {"HIGH": "green", "MED": "yellow", "LOW": "red"}.get(confidence, "white")
             print_info(
                 f"grounded {grounded_mark}  |  [{conf_color}]{confidence}[/{conf_color}]  |  "
-                f"{response['total_tokens']} tokens  |  {gen_s:.1f}s  |  msg: {last_message_id[:12]}"
+                f"{resp.total_tokens} tokens  |  {gen_s:.1f}s  |  msg: {resp.message_id[:12]}"
             )
 
         if show_chunks:
-            for r in results:
-                rec = r.get("record", {})
+            for r in resp.retrieved_chunks:
+                rec  = r.get("record", {})
                 meta = rec.get("metadata", {})
-                rerank_line = (
-                    f"  Rerank: {r['rerank_score']:.4f}"
-                    if "rerank_score" in r else ""
-                )
+                rerank_line = f"  Rerank: {r['rerank_score']:.4f}" if "rerank_score" in r else ""
                 print_panel(
                     (
                         f"Fused: {r.get('fused_score', 0):.5f}{rerank_line}  "
@@ -1347,11 +1308,11 @@ def chat(
                     border_style="info",
                 )
 
-        if think_on and show_think and gen.thinking_text:
-            print_panel(gen.thinking_text, title="Thinking", border_style="info")
+        if think_on and show_think and resp.thinking_text:
+            print_panel(resp.thinking_text, title="Thinking", border_style="info")
 
-    client.unload()
-    log_session_end(session_id=session_id, turn_count=turn)
+    engine.unload()
+    engine.end_session(session_id=session_id, turn_count=turn)
     print_success(f"Session ended after {turn} turn{'s' if turn != 1 else ''}.")
 
 @app.command("upload-logs")
