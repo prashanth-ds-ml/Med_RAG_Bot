@@ -21,9 +21,9 @@ Device choice:
   Pass device="cuda" if you have VRAM headroom (RTX 3060 with 8GB+).
 
 Model choice:
-  BAAI/bge-reranker-base  (~270MB, English, fast, good quality)
+  cross-encoder/ms-marco-MiniLM-L-6-v2 (~22MB, very fast, good English quality) ← default
+  BAAI/bge-reranker-base  (~1.1GB, English, stronger quality)
   BAAI/bge-reranker-v2-m3 (~570MB, multilingual, best quality)
-  cross-encoder/ms-marco-MiniLM-L-6-v2 (~90MB, very fast, lighter quality)
 """
 
 import logging
@@ -31,7 +31,7 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_RERANKER_MODEL = "BAAI/bge-reranker-base"
+DEFAULT_RERANKER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
 
 class CrossEncoderReranker:
