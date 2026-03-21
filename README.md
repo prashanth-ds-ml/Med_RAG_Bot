@@ -41,15 +41,15 @@ Most RAG tutorials wrap LangChain in 50 lines and call it done. This project tak
 
 ```
                           ┌─────────────────────────────────────────┐
-                          │           PDF Corpus Pipeline            │
-                          │                                          │
+                          │           PDF Corpus Pipeline           │
+                          │                                         │
   ICMR / NCDC / WHO ────► │  Download → Language Filter → Extract   │
   MOHFW documents         │  → Chunk (atomic + parent) → Dedupe     │
                           └──────────────┬──────────────────────────┘
                                          │
                           ┌──────────────▼──────────────────────────┐
-                          │              Index Layer                 │
-                          │                                          │
+                          │              Index Layer                │
+                          │                                         │
                           │  BM25 Index (keyword)                   │
                           │  FAISS IndexFlatIP (semantic vectors)   │
                           │  Embedding: BAAI/bge-base-en-v1.5       │
@@ -58,25 +58,25 @@ Most RAG tutorials wrap LangChain in 50 lines and call it done. This project tak
               User Query ───────────────►│
                                          │
                           ┌──────────────▼──────────────────────────┐
-                          │           Hybrid Retriever               │
-                          │                                          │
+                          │           Hybrid Retriever              │
+                          │                                         │
                           │  BM25 top-20  +  FAISS top-20           │
                           │         ↓ RRF fusion (k=60)             │
                           │  Cross-encoder re-ranker (top-5)        │
                           └──────────────┬──────────────────────────┘
                                          │
                           ┌──────────────▼──────────────────────────┐
-                          │           Generation Layer               │
-                          │                                          │
-                          │  Qwen3-4B (4-bit NF4 quantized)        │
+                          │           Generation Layer              │
+                          │                                         │
+                          │  Qwen3-4B (4-bit NF4 quantized)         │
                           │  Query-type routing (7 types)           │
-                          │  Thinking budget control                 │
+                          │  Thinking budget control                │
                           │  Conversation memory (last 3 turns)     │
                           └──────────────┬──────────────────────────┘
                                          │
                           ┌──────────────▼──────────────────────────┐
-                          │         Response Formatter               │
-                          │                                          │
+                          │         Response Formatter              │
+                          │                                         │
                           │  Citation parsing + URL grounding       │
                           │  Confidence tiers (HIGH / MED / LOW)    │
                           │  Follow-up question extraction          │
@@ -91,8 +91,8 @@ Most RAG tutorials wrap LangChain in 50 lines and call it done. This project tak
           └───────────────┘   └──────────────────┘   └───────────────────┘
                                          │
                           ┌──────────────▼──────────────────────────┐
-                          │          Observability Layer             │
-                          │                                          │
+                          │          Observability Layer            │
+                          │                                         │
                           │  JSONL session logging (local)          │
                           │  Streamlit dashboard (5 pages)          │
                           │  Cost estimator USD + INR               │
