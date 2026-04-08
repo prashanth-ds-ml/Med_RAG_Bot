@@ -34,6 +34,10 @@ from threading import Thread
 from typing import Any, Generator
 
 from dotenv import load_dotenv
+from langchain_core.language_models import BaseChatModel
+from langchain_core.messages import AIMessage, BaseMessage
+from langchain_core.outputs import ChatGeneration, ChatResult
+from pydantic import ConfigDict, Field as PydanticField
 
 # Load .env from project root (two levels up from this file: app/generation/ → root)
 load_dotenv(Path(__file__).resolve().parents[2] / ".env")
@@ -414,3 +418,125 @@ def get_client(model_name: str = DEFAULT_MODEL) -> QwenClient:
         _client = QwenClient(model_name=model_name)
         _client.load()
     return _client
+
+
+# ---------------------------------------------------------------------------
+# LangChain adapter — lets Qwen3 participate in LCEL chains
+# ---------------------------------------------------------------------------
+
+
+def _lc_messages_to_dicts(messages: list[BaseMessage]) -> list[dict[str, str]]:
+    """
+    Convert LangChain message objects to the dict format QwenClient expects.
+
+    Why: QwenClient takes {"role": ..., "content": ...} dicts, matching
+    the OpenAI chat format. LangChain uses typed message objects instead.
+    """
+    role_map = {
+        "human": "user",
+        "ai": "assistant",
+        "system": "system",
+    }
+    return [
+        {"role": role_map.get(msg.type, "user"), "content": msg.content}
+        for msg in messages
+    ]
+
+
+class QwenLangChainLLM(BaseChatModel):
+    """
+    LangChain BaseChatModel wrapper around QwenClient (local Qwen3-4B).
+
+    Why this wrapper:
+      Lets the local Qwen3 model participate in LCEL chains alongside
+      ChatGroq, ChatOpenAI etc — same invoke/stream interface.
+      The underlying QwenClient handles 4-bit NF4 quantization, thinking
+      mode, and token tracking. This wrapper just adapts the interface.
+
+    Usage:
+        llm = QwenLangChainLLM()
+        llm.load()
+        result = llm.invoke([HumanMessage(content="What is TB?")])
+
+    Thinking mode:
+        llm = QwenLangChainLLM(enable_thinking=True, thinking_budget=512)
+    """
+
+    model_name: str = PydanticField(default=DEFAULT_MODEL)
+    enable_thinking: bool = PydanticField(default=False)
+    thinking_budget: int = PydanticField(default=512)
+    load_in_4bit: bool = PydanticField(default=True)
+    temperature: float = PydanticField(default=0.3)
+    max_tokens: int = PydanticField(default=1024)
+
+    # Private — excluded from Pydantic schema; managed by load()/unload()
+    _client: QwenClient | None = None
+
+    class Config:
+        arbitrary_types_allowed = True
+
+    def load(self) -> None:
+        """Load the Qwen3 model into memory. Call once before invoke()."""
+        self._client = QwenClient(
+            model_name=self.model_name,
+            load_in_4bit=self.load_in_4bit,
+            temperature=self.temperature,
+            max_new_tokens=self.max_tokens,
+            thinking_budget=self.thinking_budget,
+        )
+        self._client.load()
+
+    def unload(self) -> None:
+        """Release model from memory."""
+        if self._client:
+            self._client.unload()
+            self._client = None
+
+    def _generate(
+        self,
+        messages: list[BaseMessage],
+        stop: list[str] | None = None,
+        run_manager: object = None,
+        **kwargs: object,
+    ) -> ChatResult:
+        if self._client is None:
+            raise RuntimeError("Call load() before using QwenLangChainLLM.")
+
+        dict_messages = _lc_messages_to_dicts(messages)
+        enable_thinking = kwargs.get("enable_thinking", self.enable_thinking)
+        thinking_budget = kwargs.get("thinking_budget", self.thinking_budget)
+
+        result: GenerationResult = self._client.generate(
+            dict_messages,
+            enable_thinking=enable_thinking,
+            thinking_budget=thinking_budget,
+            max_new_tokens=self.max_tokens,
+        )
+
+        # Store thinking text and token usage for optional display / observability
+        additional_kwargs: dict = {}
+        if result.thinking_text:
+            additional_kwargs["thinking"] = result.thinking_text
+        additional_kwargs["usage"] = {
+            "prompt_tokens": result.prompt_tokens,
+            "completion_tokens": result.completion_tokens,
+            "total_tokens": result.total_tokens,
+        }
+
+        ai_message = AIMessage(
+            content=result.answer_text,
+            additional_kwargs=additional_kwargs,
+        )
+        return ChatResult(generations=[ChatGeneration(message=ai_message)])
+
+    @property
+    def _llm_type(self) -> str:
+        return "qwen-local"
+
+    @property
+    def _identifying_params(self) -> dict:
+        return {
+            "model_name": self.model_name,
+            "enable_thinking": self.enable_thinking,
+            "load_in_4bit": self.load_in_4bit,
+        }
